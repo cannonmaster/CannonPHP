@@ -1,0 +1,14 @@
+# Ignore composer vendor directory
+/vendor
+
+# Ignore PHPStorm project files
+/.idea
+
+# Ignore .env files used for environment configuration
+/.env
+
+# Ignore log files
+/log/*
+
+# Ignore cache files
+/Cache/*
