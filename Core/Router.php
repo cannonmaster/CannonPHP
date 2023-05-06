@@ -1,4 +1,9 @@
 <?php
+
+namespace Core;
+
+
+
 class Router
 {
     protected $routes = [];
@@ -6,7 +11,7 @@ class Router
 
     public function match($url)
     {
-
+        $url = $this->removeQueryStringVariables($url);
         foreach ($this->routes as $route => $params) {
             if (preg_match($route, $url, $matches)) {
                 // var_dump($matches);
@@ -20,6 +25,53 @@ class Router
             }
         }
         return false;
+    }
+    private function controllerNameCamel($controller)
+    {
+        return str_replace(' ', '', ucwords(str_replace('-', ' ', $controller)));
+    }
+    private function methodNameCamel($methodName)
+    {
+        return lcfirst($this->controllerNameCamel($methodName));
+    }
+    public function dispatch($url)
+    {
+        if ($this->match($url)) {
+            $controller = $this->params['controller'];
+            $controller = $this->controllerNameCamel($controller);
+            $controller = $this->getNamespace() . $controller;
+            // $controller = "App\\Controller\\$controller";
+            // var_dump($controller);
+            // exit;
+            if (class_exists($controller)) {
+                $controller_object = new $controller($this->params);
+                $method = $this->params['action'];
+                $method = $this->methodNameCamel($method);
+                if (preg_match('/action$/i', $method) == 0) {
+                    $controller_object->$method();
+                } else {
+                    throw new \Exception('Method $action in controller $controller cannon be called directly');
+                }
+            } else {
+                throw new \Exception("controller $controller not found");
+            }
+        } else {
+            throw new \Exception('router not found', 404);
+        }
+    }
+    protected function getNamespace()
+    {
+        $namespace = 'App\\Controller\\';
+        if (isset($this->params['namespace']))
+            return $namespace . $this->params['namespace'] . '\\';
+        return $namespace;
+    }
+    protected function removeQueryStringVariables($url)
+    {
+        if ($url === '') return $url;
+        $matches = explode('&', $url, 2);
+        if (false === strpos($matches[0], '=')) return $matches[0];
+        return '';
     }
     public function add($route, $params = [])
     {
