@@ -4,6 +4,11 @@ namespace Core;
 
 class Error
 {
+    protected $config;
+    public function __construct($config)
+    {
+        $this->config = $config;
+    }
     public static function errorHandler($level, $message, $file, $line)
     {
         if (error_reporting() !== 0) {
@@ -19,7 +24,6 @@ class Error
         }
         http_response_code($code);
         if (\App\Config::show_error) {
-            echo '123';
             echo "<h1>Fatal Error</h1>";
             echo "<p>Uncaught exception: '" . get_class($exception) . "'</p> ";
 

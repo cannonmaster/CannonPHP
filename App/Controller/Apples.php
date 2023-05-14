@@ -9,14 +9,21 @@ class Apples extends BaseController
 {
     public function indexAction()
     {
-        echo 'apple index method';
+        // echo 'apple index method';
         $name = 'hi';
-        // return View::render('Home/index.php', ['name' => $name]);
+
+        // $output = View::renderTemplate('Home/index.html', ['name' => $name]);
+        // $this->response->setoutput($output);
         return View::renderTemplate('Home/index.html', ['name' => $name]);
     }
     public function makeJuiceAction()
     {
         echo htmlspecialchars(print_r($this->route_params, true));
         echo 'made a juice';
+    }
+
+    public function testAction()
+    {
+        echo '123';
     }
 }

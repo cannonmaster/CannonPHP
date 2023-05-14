@@ -13,7 +13,7 @@ class View
         if (is_readable($filepath)) {
             require $filepath;
         } else {
-            echo 'file $file cannon be read';
+            echo "file $filepath cannon be read";
         }
     }
 
@@ -26,6 +26,6 @@ class View
                 'cache' => '../Cache',
             ]);
         }
-        echo $twig->render($file, $args);
+        return $twig->render($file, $args);
     }
 }

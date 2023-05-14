@@ -8,13 +8,17 @@ class Router
 {
     protected $routes = [];
     protected $params = [];
+    protected $registry;
 
+    public function __construct($registry)
+    {
+        $this->registry = $registry;
+    }
     public function match($url)
     {
         $url = $this->removeQueryStringVariables($url);
         foreach ($this->routes as $route => $params) {
             if (preg_match($route, $url, $matches)) {
-                // var_dump($matches);
                 foreach ($matches as $key => $match) {
                     if (is_string($key)) {
                         $params[$key] = $match;
@@ -40,11 +44,9 @@ class Router
             $controller = $this->params['controller'];
             $controller = $this->controllerNameCamel($controller);
             $controller = $this->getNamespace() . $controller;
-            // $controller = "App\\Controller\\$controller";
-            // var_dump($controller);
-            // exit;
             if (class_exists($controller)) {
-                $controller_object = new $controller($this->params);
+                $controller_object = new $controller($this->params, $this->registry);
+                $this->registry->set('currentRoute', $controller_object);
                 $method = $this->params['action'];
                 $method = $this->methodNameCamel($method);
                 if (preg_match('/action$/i', $method) == 0) {
@@ -80,7 +82,6 @@ class Router
         $route = preg_replace('/\{([a-z]+):([^\}]+)\}/', '(?P<\1>\2)', $route);
 
         $route = '/^' . $route . '$/i';
-        // var_dump($route);
         $this->routes[$route] = $params;
     }
     public function getParams()
@@ -91,5 +92,11 @@ class Router
     public function getRoutes()
     {
         return $this->routes;
+    }
+
+    public function load()
+    {
+        $router = $this;
+        require(dirname(__DIR__) . '/App/Routes.php');
     }
 }
