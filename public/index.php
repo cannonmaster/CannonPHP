@@ -23,9 +23,15 @@ use Engine\Session;
 use Engine\Cache;
 use Engine\Language;
 use Engine\Response;
+use Engine\Interface;
 
+define('LOG_FOLDER', dirname(__DIR__) . '/log/');
+define('CACHE_FOLDER', dirname(__DIR__) . '/Storage/cache/');
 // error handler
 error_reporting(E_ALL);
+
+// config error handler, and setup the logging system
+// the logging system use the /log folder to log.
 set_error_handler('Core\Error::errorHandler');
 set_exception_handler('Core\Error::exceptionHandler');
 
@@ -35,6 +41,10 @@ $di = new Engine\Di();
 $config = new App\Config();
 $di->set('config', $config);
 
+$log = new Engine\Log(App\Config::log_path);
+// $log->logging('abc');
+$di->set('log', $log);
+
 // routing system
 $router = new Core\Router($di);
 // routes registers
@@ -42,12 +52,7 @@ $router->load();
 $di->set('router', $router);
 
 
-// global controller hook and custom action before / after hook system
-// Todo: add remove hook and clear hook for a specific hook
-$hook = new Engine\Hook();
-// glob to load all the hook under the app/hook directory
-$hook->load();
-$di->set('hook', $hook);
+
 
 // sanitize the global super variable such as $_GET, $_POST, $_FILES , etc ...
 $request = new Engine\Request();
@@ -93,8 +98,23 @@ $cache = new Engine\Cache(App\Config::cache_engine, $di);
 $di->set('cache', $cache);
 
 // language system (need to be test)
-$language = new Engine\Language(App\Config::language, dirname(__DIR__) . '/App/Language/');
+$language = new Engine\Language(App\Config::language, dirname(__DIR__) . '/App/Language/', $di);
+setcookie('language', $language->code, time() + 3600 * 24 * 30, '/');
 $di->set('language', $language);
+
+$theme = new Engine\Theme(App\Config::theme, $di);
+$di->set('theme', $theme);
+
+
+$agent = new Engine\Agent($di);
+$di->set('agent', $agent);
+
+$file = new Engine\File($di);
+$di->set('file', $file);
+
+$profile = new Engine\Profile($di);
+$di->set('profile', $profile);
+
 
 // reponse 
 $response = new Engine\Response($di);
@@ -106,14 +126,26 @@ foreach (App\Config::header as $header) {
 $response->setCompressionLevel(App\Config::compressLevel);
 $di->set('response', $response);
 
+
 // custom service provider register to di container
 foreach (glob(dirname(__DIR__) . '/App/Service/*.php') as $service) {
   $classname = basename($service, '.php');
   $class = "App\\Service\\" . $classname;
   if (class_exists($class)) {
-    $di->set($classname, new $class($di));
+    $provider = new $class();
+    if ($provider instanceof \Engine\Interface\ServiceProviderInterface) {
+      $provider->register($di);
+      // $di->set($classname, new $class($di));
+    }
   }
 }
+
+// global controller hook and custom action before / after hook system
+// Todo: add remove hook and clear hook for a specific hook
+$hook = new Engine\Hook($di);
+// glob to load all the hook under the app/hook directory
+$hook->load();
+$di->set('hook', $hook);
 
 // dispatch route from the query_string which from the current visiting url
 $router->dispatch($_SERVER['QUERY_STRING']);

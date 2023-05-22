@@ -4,50 +4,61 @@ namespace Core;
 
 abstract class BaseController
 {
-    protected $route_params = [];
-    protected $beforeHooks = [];
-    protected $afterHooks = [];
+    protected array $route_params = [];
+    protected array $beforeHooks = [];
+    protected array $afterHooks = [];
     protected $registry;
-    public function __call($method, $args)
+
+    /**
+     * Magic method triggered when invoking inaccessible methods in the controller.
+     *
+     * @param string $method The method name.
+     * @param array  $args   The method arguments.
+     *
+     * @throws \Exception If the method is not found in the controller.
+     */
+    public function __call(string $method, array $args)
     {
-        // $method = $method . 'Action';
         if (method_exists($this, $method . 'Action')) {
-            if ($this->before() !== false) {
+            if ($this->beforeController() !== false) {
                 if ($this->beforeAction() !== false) {
                     $output = call_user_func_array([$this, $method . 'Action'], $args);
-                    $this->registry->get('response')->setoutput($output);
-                    // $this->afterAction();
+                    $this->registry->get('response')->setOutput($output);
                 }
-                // $this->after();
             }
         } else if (method_exists($this, $method)) {
             call_user_func_array([$this, $method], $args);
+        } else if (method_exists(self::class, $method)) {
+            call_user_func_array([self::class, $method], $args);
         } else {
-            throw new \Exception("method $method not found in controller " . get_class($this));
+            throw new \Exception("Method $method not found in controller " . get_class($this));
         }
-        // static $twig;
-        // if (!$twig) {
-        //     $loader = new \Twig\Loader\FilesystemLoader(dirname(__DIR__) . '/App/View');
-        //     $twig = new \Twig\Environment($loader, [
-        //         'cache' => '../Cache',
-        //     ]);
-        // }
     }
-    protected function before()
+
+    /**
+     * Executed before the controller action.
+     */
+    protected function beforeController(): void
     {
-        // echo "(before) ";
         if (null !== $this->registry->get('hook')->getHook('beforeController')) {
             $this->registry->get('hook')->execute('beforeController');
         }
     }
-    protected function after()
+
+    /**
+     * Executed after the controller action.
+     */
+    protected function afterController(): void
     {
-        // echo ' (after)';
         if (null !== $this->registry->get('hook')->getHook('afterController')) {
             $this->registry->get('hook')->execute('afterController');
         }
     }
-    protected function beforeAction()
+
+    /**
+     * Executed before the specific controller action.
+     */
+    protected function beforeAction(): void
     {
         $controller = $this->route_params['controller'];
         $action = $this->route_params['action'];
@@ -56,7 +67,11 @@ abstract class BaseController
             $this->registry->get('hook')->execute($hook);
         }
     }
-    protected function afterAction()
+
+    /**
+     * Executed after the specific controller action.
+     */
+    protected function afterAction(): void
     {
         $controller = $this->route_params['controller'];
         $action = $this->route_params['action'];
@@ -65,11 +80,26 @@ abstract class BaseController
             $this->registry->get('hook')->execute($hook);
         }
     }
-    public function __construct($parames, $registry)
+
+    /**
+     * BaseController constructor.
+     *
+     * @param array $params   The route parameters.
+     * @param mixed $registry The registry object.
+     */
+    public function __construct(array $params, $registry)
     {
-        $this->route_params = $parames;
+        $this->route_params = $params;
         $this->registry = $registry;
     }
+
+    /**
+     * Magic method triggered when accessing inaccessible properties in the controller.
+     *
+     * @param string $key The property name.
+     *
+     * @return mixed|null The value of the property or null if it doesn't exist.
+     */
     public function __get(string $key)
     {
         if ($this->registry->has($key)) {
@@ -78,6 +108,12 @@ abstract class BaseController
         return null;
     }
 
+    /**
+     * Magic method triggered when setting a value to an inaccessible property in the controller.
+     *
+     * @param string $key   The property name.
+     * @param mixed  $data  The value to be set.
+     */
     public function __set(string $key, $data): void
     {
         $this->registry->set($key, $data);

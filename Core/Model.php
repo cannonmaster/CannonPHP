@@ -6,6 +6,11 @@ use App\Config;
 
 abstract class Model
 {
+    /**
+     * Get the database connection instance.
+     *
+     * @return \PDO The database connection instance.
+     */
     protected static function getDb()
     {
         static $db = null;

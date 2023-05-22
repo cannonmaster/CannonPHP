@@ -2,10 +2,9 @@
 
 namespace App\Service;
 
-class TestService
+class TestServiceProvider implements \Engine\Interface\ServiceProviderInterface
 {
-    public function test()
+    public function register(\Engine\Di $di)
     {
-        echo 'test service';
     }
 }

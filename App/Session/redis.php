@@ -36,7 +36,7 @@ class Redis implements SessionAdapterInterface
 
     public function write(string $session_id, array $data): void
     {
-        $this->redis->set($session_id, json_encode($data));
+        $this->redis->set($session_id, json_encode($data), \App\Config::session_expire);
     }
 
     public function gc(string $max_lifetime): void

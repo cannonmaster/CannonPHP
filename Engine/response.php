@@ -8,38 +8,68 @@ class Response
     private array $headers = [];
     private $di;
     private $compressLevel = 0;
-    private $encoding  = null;
+    private $encoding = null;
+
+    /**
+     * Response constructor.
+     *
+     * @param \Engine\Di $di The dependency injection container.
+     */
     public function __construct(\Engine\Di $di)
     {
         $this->di = $di;
     }
 
-    public function addHeader(string $header)
+    /**
+     * Add a header to the response.
+     *
+     * @param string $header The header string to add.
+     *
+     * @return self
+     */
+    public function addHeader(string $header): self
     {
         $this->headers[] = $header;
         return $this;
     }
 
-    public function getHeader()
+    /**
+     * Get the headers of the response.
+     *
+     * @return array The response headers.
+     */
+    public function getHeader(): array
     {
         return $this->headers;
     }
 
+    /**
+     * Get the output of the response.
+     *
+     * @return mixed The response output.
+     */
     public function getOutput()
     {
         return $this->output;
     }
 
-    private function compress(int $level, string $data)
+    /**
+     * Compress the response data based on the compression level and encoding.
+     *
+     * @param int    $level The compression level.
+     * @param string $data  The data to compress.
+     *
+     * @return string The compressed data.
+     */
+    private function compress(int $level, string $data): string
     {
-
         $level = $level ?: $this->compressLevel;
         if ($level < -1 || $level > 9) {
             return $data;
         }
-        if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) || strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false) {
+        if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false) {
             $this->encoding = 'gzip';
-        } else if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) || strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'x-gzip') !== false) {
+        } elseif (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'x-gzip') !== false) {
             $this->encoding = 'x-gzip';
         }
 
@@ -51,13 +81,10 @@ class Response
             return $data;
         }
 
-        if (headers_sent()) {
+        if (headers_sent() || connection_status()) {
             return $data;
         }
 
-        if (connection_status()) {
-            return $data;
-        }
         $compressed = gzencode($data, $level);
         $this->addHeader('Content-Encoding: ' . $this->encoding);
         $this->addHeader('Content-Length: ' . strlen($compressed));
@@ -65,50 +92,75 @@ class Response
         return $compressed;
     }
 
-    public function setCompressionLevel(int $compressLevel)
+    /**
+     * Set the compression level for the response.
+     *
+     * @param int $compressLevel The compression level to set.
+     */
+    public function setCompressionLevel(int $compressLevel): void
     {
         $this->compressLevel  = $compressLevel;
     }
 
-    public function setoutput($output)
+    /**
+     * Set the output of the response.
+     *
+     * @param mixed $output The response output.
+     *
+     * @return self
+     */
+    public function setOutput($output): self
     {
         $this->output = $output;
         return $this;
-        // $this->output();
     }
 
-    public function output()
+    public function output(): void
     {
+
         if ($this->output) {
             $output = $this->compressLevel ? $this->compress($this->compressLevel, $this->output) : $this->output;
 
+            $current_route = $this->currentRoute();
             if (!headers_sent()) {
                 foreach ($this->headers as $header) {
                     header($header, true);
                 }
             }
             echo $output;
-            // echo $this->output;
-
-            // after action hook
-            $current_route = $this->currentRoute();
-
             $this->afterActionHook($current_route);
             $this->afterControllerHook($current_route);
+            // After action hook
         }
     }
 
+    /**
+     * Get the current route object from the dependency injection container.
+     *
+     * @return mixed The current route object.
+     */
     private function currentRoute()
     {
         return $this->di->get('currentRoute');
     }
 
-    public function afterActionHook($current_object)
+    /**
+     * Call the afterAction method on the current route object.
+     *
+     * @param mixed $current_object The current route object.
+     */
+    public function afterActionHook($current_object): void
     {
         $current_object->afterAction();
     }
-    public function afterControllerHook($current_object)
+
+    /**
+     * Call the afterController method on the current route object.
+     *
+     * @param mixed $current_object The current route object.
+     */
+    public function afterControllerHook($current_object): void
     {
-        $current_object->after();
+        $current_object->afterController();
     }
 }

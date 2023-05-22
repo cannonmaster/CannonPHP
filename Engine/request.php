@@ -4,12 +4,15 @@ namespace Engine;
 
 class Request
 {
-    public $get = [];
-    public $post = [];
-    public $cookie = [];
-    public $files = [];
-    public $server = [];
+    public array $get = [];
+    public array $post = [];
+    public array $cookie = [];
+    public array $files = [];
+    public array $server = [];
 
+    /**
+     * Request constructor.
+     */
     public function __construct()
     {
         $this->get = $this->clear($_GET);
@@ -19,7 +22,14 @@ class Request
         $this->cookie = $this->clear($_COOKIE);
     }
 
-    private function clear($data)
+    /**
+     * Clear the input data by removing potential security risks and sanitizing the values.
+     *
+     * @param mixed $data The input data to be cleared.
+     *
+     * @return mixed The cleared input data.
+     */
+    private function clear($data): mixed
     {
         if (is_array($data)) {
             foreach ($data as $key => $val) {
