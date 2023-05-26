@@ -28,7 +28,7 @@ class Config
     const cache_hostname = 'localhost';
     const cache_password = '';
     const cache_schema = 'tcp';
-    const cache_port = '6379';
+    const cache_port = 6379;
     const cache_expire = 3600;
     const cache_ssl = [];
     const cache_persistent = '1';
@@ -41,6 +41,9 @@ class Config
 
     const session_autostart = true;
     const session_engine = 'redis';
+    const session_db_table = 'cannon_session';
+    const session_redis_host = 'localhost';
+    const session_redis_port = 6379;
     const session_name = 'cannon_session';
     const session_path = '/';
     const session_http_only = true;

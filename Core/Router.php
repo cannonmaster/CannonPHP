@@ -2,6 +2,8 @@
 
 namespace Core;
 
+use ReflectionClass;
+
 class Router
 {
     protected $routes = [];
@@ -77,6 +79,7 @@ class Router
             $controller = $this->getNamespace() . $controller;
             if (class_exists($controller)) {
                 $this->params['action'] = isset($this->params['action']) ? $this->params['action'] : 'index';
+
                 $controller_object = new $controller($this->params, $this->registry);
                 $this->registry->set('currentRoute', $controller_object);
                 $method = $this->params['action'];

@@ -62,13 +62,14 @@ $di->set('request', $request);
 
 // connection tested but not the query, todo: test query etc ...
 if (App\Config::db_autostart) {
-  $db = new Engine\Db($di, App\Config::db_engine);
+  $db = new Engine\Db($di);
   $di->set('db', $db);
 }
 
 
 // enable session if user config the serssion auto start "true"
 if (App\Config::session_autostart) {
+
   $session = new Engine\Session(App\Config::session_engine, $di);
   $di->set('session', $session);
 

@@ -11,10 +11,13 @@ class Db implements SessionAdapterInterface
     protected $table;
     protected $di;
 
-    public function __construct(\Engine\Di $di, $table = 'cannon_session')
+    public function __construct(\Engine\Di $di)
     {
+        if (!$di->has('db')) {
+            $di->set('db', new \Engine\Db($di));
+        }
         $this->db = $di->get('db');
-        $this->table = $table;
+        $this->table = \App\Config::session_db_table;
         $this->di = $di;
     }
 
@@ -26,30 +29,30 @@ class Db implements SessionAdapterInterface
         return $data ? unserialize($data) : [];
     }
 
-    public function write(string $session_id, array $data): void
+    public function write(string $session_id, array $data): bool
     {
         $serializedData = serialize($data);
         try {
             $stmt = $this->db->prepare("REPLACE INTO {$this->table} (session_id, data) VALUES (?, ?)");
-            $stmt->execute([$session_id, $serializedData]);
+            return $stmt->execute([$session_id, $serializedData]);
         } catch (\PDOException $e) {
             // handle error 
             return false;
         }
     }
 
-    public function destroy(string $session_id): void
+    public function destroy(string $session_id): bool
     {
         try {
 
             $stmt = $this->db->prepare("DELETE FROM {$this->table} WHERE session_id = ?");
-            $stmt->execute([$session_id]);
+            return $stmt->execute([$session_id]);
         } catch (\PDOException $e) {
             return false;
         }
     }
 
-    public function gc(string $lifetime): void
+    public function gc(string $lifetime): bool
     {
         $maxLifetime = time() - $lifetime;
         try {

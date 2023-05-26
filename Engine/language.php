@@ -28,7 +28,7 @@ class Language
     {
         $this->directory = $directory;
         $this->di = $di;
-        $this->code = $this->findLanguage();
+        $this->code = !empty($code) ? $code :  $this->findLanguage();
     }
 
     /**

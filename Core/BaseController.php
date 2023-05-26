@@ -7,7 +7,7 @@ abstract class BaseController
     protected array $route_params = [];
     protected array $beforeHooks = [];
     protected array $afterHooks = [];
-    protected $registry;
+    protected \Engine\Di $registry;
 
     /**
      * Magic method triggered when invoking inaccessible methods in the controller.
@@ -38,47 +38,56 @@ abstract class BaseController
     /**
      * Executed before the controller action.
      */
-    protected function beforeController(): void
+    protected function beforeController(): bool
     {
         if (null !== $this->registry->get('hook')->getHook('beforeController')) {
             $this->registry->get('hook')->execute('beforeController');
+            return true;
         }
+
+        return false;
     }
 
     /**
      * Executed after the controller action.
      */
-    protected function afterController(): void
+    protected function afterController(): bool
     {
         if (null !== $this->registry->get('hook')->getHook('afterController')) {
             $this->registry->get('hook')->execute('afterController');
+            return true;
         }
+        return false;
     }
 
     /**
      * Executed before the specific controller action.
      */
-    protected function beforeAction(): void
+    protected function beforeAction(): bool
     {
         $controller = $this->route_params['controller'];
         $action = $this->route_params['action'];
         $hook = "before:$controller/$action";
         if (null !== $this->registry->get('hook')->getHook($hook)) {
             $this->registry->get('hook')->execute($hook);
+            return true;
         }
+        return false;
     }
 
     /**
      * Executed after the specific controller action.
      */
-    protected function afterAction(): void
+    protected function afterAction(): bool
     {
         $controller = $this->route_params['controller'];
         $action = $this->route_params['action'];
         $hook = "after:$controller/$action";
         if (null !== $this->registry->get('hook')->getHook($hook)) {
             $this->registry->get('hook')->execute($hook);
+            return true;
         }
+        return false;
     }
 
     /**
@@ -87,7 +96,7 @@ abstract class BaseController
      * @param array $params   The route parameters.
      * @param mixed $registry The registry object.
      */
-    public function __construct(array $params, $registry)
+    public function __construct(array $params, \Engine\Di $registry)
     {
         $this->route_params = $params;
         $this->registry = $registry;

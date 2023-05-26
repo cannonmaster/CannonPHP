@@ -3,9 +3,10 @@
 namespace Engine;
 
 use App\Config;
+use Core\Model;
 use Exception;
 
-class Db
+class Db extends Model
 {
     /**
      * @var mixed Database adapter instance
@@ -25,7 +26,7 @@ class Db
      * @throws Exception If the database adapter class does not exist
      */
     public function __construct(
-        $di,
+        \Engine\Di $di,
         string $db_engine = Config::db_engine,
         string $hostname = Config::host,
         string $username = Config::username,
@@ -33,12 +34,13 @@ class Db
         string $dbname = Config::dbname,
         int $port = Config::port
     ) {
-        $class = "App\\DB\\$db_engine";
-        if (class_exists($class)) {
-            $this->adapter = new $class($di, $hostname, $username, $password, $dbname, $port);
-        } else {
-            throw new Exception("Error: could not load database adapter " . $db_engine);
-        }
+        $this->adapter = static::getDb($db_engine, $hostname, $username, $password, $dbname, $port);
+        // $class = "App\\DB\\$db_engine";
+        // if (class_exists($class)) {
+        //     $this->adapter = new $class($di, $hostname, $username, $password, $dbname, $port);
+        // } else {
+        //     throw new Exception("Error: could not load database adapter " . $db_engine);
+        // }
     }
 
     /**

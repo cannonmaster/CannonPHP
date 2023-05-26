@@ -2,6 +2,7 @@
 
 namespace App\DB;
 
+use Core\Model;
 use PDOException;
 
 /**
@@ -23,7 +24,7 @@ class PDO
      * @param array $options Additional PDO options.
      * @throws ConnectionException If the connection to the database fails.
      */
-    public function __construct($di, string $hostname = null, string $username = null, string $password = null, $dbname, $port = 3306, array $options = [])
+    public function __construct(string $hostname = null, string $username = null, string $password = null, $dbname, $port = 3306, array $options = [])
     {
         $dsn = "mysql:host=$hostname;dbname=$dbname;charset=utf8mb4";
         try {

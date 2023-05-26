@@ -22,7 +22,7 @@ interface SessionAdapterInterface
      * @param array $data The session data as an associative array.
      * @return void
      */
-    public function write(string $sessionId, array $data): void;
+    public function write(string $sessionId, array $data): bool;
 
     /**
      * Destroy the session data for the specified session ID.
@@ -30,7 +30,7 @@ interface SessionAdapterInterface
      * @param string $sessionId The session ID.
      * @return void
      */
-    public function destroy(string $sessionId): void;
+    public function destroy(string $sessionId): bool;
 
     /**
      * Perform garbage collection on expired session data.
@@ -38,5 +38,5 @@ interface SessionAdapterInterface
      * @param string $maxLifetime The maximum lifetime of a session (in seconds).
      * @return void
      */
-    public function gc(string $maxLifetime): void;
+    public function gc(string $maxLifetime): bool;
 }
