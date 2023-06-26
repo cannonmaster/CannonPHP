@@ -74,6 +74,9 @@ class Router
     public function dispatch($url)
     {
         $url = rtrim($url, '/');
+        if (empty($url)) {
+            $url = 'home';
+        }
         if ($this->match($url)) {
             $controller = $this->params['controller'];
             $controller = $this->controllerNameCamel($controller);

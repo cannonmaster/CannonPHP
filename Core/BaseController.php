@@ -22,10 +22,10 @@ abstract class BaseController
         if (method_exists($this, $method . 'Action')) {
             if ($this->beforeController() !== false) {
                 if ($this->beforeAction() !== false) {
-                    $output = call_user_func_array([$this, $method . 'Action'], $args);
-                    $this->registry->get('response')->setOutput($output);
                 }
             }
+            $output = call_user_func_array([$this, $method . 'Action'], $args);
+            $this->registry->get('response')->setOutput($output);
         } else if (method_exists($this, $method)) {
             call_user_func_array([$this, $method], $args);
         } else if (method_exists(self::class, $method)) {

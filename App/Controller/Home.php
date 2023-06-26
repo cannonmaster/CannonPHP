@@ -8,6 +8,6 @@ class Home extends  BaseController
 {
     public function indexAction()
     {
-        echo 'home=>index';
+        return 'home/index';
     }
 }
