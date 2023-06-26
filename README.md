@@ -1,4 +1,4 @@
-# Cannon MVC Framework
+# CannonPHP MVC Framework
 
 Cannon MVC is an exceptional web application framework that embraces an expressive and elegant syntax. We strongly believe that development should be an enjoyable and creative experience, leading to true fulfillment. With Cannon MVC, you can bid farewell to the cumbersome aspects of development by effortlessly handling common tasks encountered in numerous web projects. Some of the remarkable benefits and features of Cannon MVC include:
 
