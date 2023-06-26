@@ -95,7 +95,7 @@ abstract class BaseController
      * BaseController constructor.
      *
      * @param array $params   The route parameters.
-     * @param mixed $registry The registry object.
+     * @param \Engine\Di $registry The registry object.
      */
     public function __construct(array $params, \Engine\Di $registry)
     {
