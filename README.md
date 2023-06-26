@@ -41,4 +41,4 @@ Contributions are welcome! If you find any issues or have suggestions for improv
 
 ## License
 
-This MVC framework is open-source software licensed under the [MIT License](LICENSE).
+This MVC framework is open-source software licensed under the [MIT License](https://opensource.org/licenses/MIT).
