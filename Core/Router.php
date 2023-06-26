@@ -73,6 +73,7 @@ class Router
      */
     public function dispatch($url)
     {
+        $url = rtrim($url, '/');
         if ($this->match($url)) {
             $controller = $this->params['controller'];
             $controller = $this->controllerNameCamel($controller);
@@ -84,6 +85,8 @@ class Router
                 $this->registry->set('currentRoute', $controller_object);
                 $method = $this->params['action'];
                 $method = $this->methodNameCamel($method);
+
+                // prevent the user call the action directory from the url such as http://localhost/controller/indexAction
                 if (preg_match('/action$/i', $method) == 0) {
                     $controller_object->$method();
                 } else {

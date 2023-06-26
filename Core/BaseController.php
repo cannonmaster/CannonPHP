@@ -40,8 +40,9 @@ abstract class BaseController
      */
     protected function beforeController(): bool
     {
-        if (null !== $this->registry->get('hook')->getHook('beforeController')) {
-            $this->registry->get('hook')->execute('beforeController');
+        $hook =  $this->registry->get('hook');
+        if (null !== $hook->getHook('beforeController')) {
+            $hook->execute('beforeController');
             return true;
         }
 

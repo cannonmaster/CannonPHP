@@ -52,8 +52,6 @@ $router->load();
 $di->set('router', $router);
 
 
-
-
 // sanitize the global super variable such as $_GET, $_POST, $_FILES , etc ...
 $request = new Engine\Request();
 $di->set('request', $request);

@@ -8,14 +8,14 @@ use PDOException;
 /**
  * The PDO class provides a wrapper around the PDO database connection and query execution.
  */
-class PDO
+class PDO extends Db
 {
     private \PDO $pdo;
+    private QueryResult $queryResult;
 
     /**
      * PDO constructor.
      *
-     * @param \Engine\Di $di The dependency injection container.
      * @param string|null $hostname The database hostname.
      * @param string|null $username The database username.
      * @param string|null $password The database password.
@@ -41,19 +41,25 @@ class PDO
      *
      * @param string $sql The SQL query.
      * @param array $params The query parameters.
+     * @param string $class The class name to instantiate the result objects.
      * @return QueryResult The query result.
      * @throws QueryException If the query execution fails.
      */
-    public function query(string $sql, array $params = []): QueryResult
+    public function runQuery(string $sql, array $params = [], string $class = \stdClass::class): QueryResult
     {
-        $stmt = $this->prepare($sql);
-        $stmt->execute($params);
+        try {
+            $stmt = $this->prepare($sql);
+            $stmt->execute($params);
+            $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, $class);
+            $rows = $stmt->fetchAll();
+            $count = $stmt->rowCount();
+            $lastInsertId = $this->pdo->lastInsertId();
+            $this->queryResult = new QueryResult($rows, $count, $lastInsertId);
 
-        $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        $count = $stmt->rowCount();
-        $lastInsertId = $this->pdo->lastInsertId();
-
-        return new QueryResult($rows, $count, $lastInsertId);
+            return $this->queryResult;
+        } catch (PDOException $e) {
+            throw new QueryException($e->getMessage());
+        }
     }
 
     /**
@@ -82,6 +88,33 @@ class PDO
     {
         return $this->pdo->lastInsertId($name);
     }
+
+    /**
+     * Returns the number of rows affected by the last executed query.
+     *
+     * @return int The number of affected rows.
+     */
+    public function countAffected(): int
+    {
+        return $this->queryResult->getCount();
+    }
+
+    /**
+     * Checks if the database connection is active.
+     *
+     * @return bool True if the connection is active, false otherwise.
+     */
+    public function isConnected(): bool
+    {
+        // Check if the PDO connection is active
+        $connectionStatus = $this->pdo->getAttribute(\PDO::ATTR_CONNECTION_STATUS);
+
+        if ($connectionStatus === 'Connected') {
+            return true;
+        }
+
+        return false;
+    }
 }
 
 /**
@@ -98,8 +131,7 @@ class QueryResult
      *
      * @param array $rows The query result rows.
      * @param int $count The number of rows affected by the query.
-     * @param string $lastInsertId The ID of the last
-     * inserted row or sequence value.
+     * @param string $lastInsertId The ID of the last inserted row or sequence value.
      */
     public function __construct(array $rows, int $count, string $lastInsertId)
     {

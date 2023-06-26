@@ -12,3 +12,7 @@
 
 # Ignore cache files
 /Cache/*
+
+/mindmap/*
+
+/phpmvc.mindnode/*

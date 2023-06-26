@@ -3,10 +3,10 @@
 namespace Engine;
 
 use App\Config;
-use Core\Model;
 use Exception;
+use Core\Model as DbConnection;
 
-class Db extends Model
+class Db
 {
     /**
      * @var mixed Database adapter instance
@@ -16,14 +16,15 @@ class Db extends Model
     /**
      * Db constructor.
      *
-     * @param mixed $di Dependency Injection container
-     * @param string $db_engine The database engine
-     * @param string $hostname The database hostname
-     * @param string $username The database username
-     * @param string $password The database password
-     * @param string $dbname The database name
-     * @param int $port The database port
-     * @throws Exception If the database adapter class does not exist
+     * @param \Engine\Di $di         Dependency Injection container.
+     * @param string     $db_engine  The database engine.
+     * @param string     $hostname   The database hostname.
+     * @param string     $username   The database username.
+     * @param string     $password   The database password.
+     * @param string     $dbname     The database name.
+     * @param int        $port       The database port.
+     *
+     * @throws Exception If the database adapter class does not exist.
      */
     public function __construct(
         \Engine\Di $di,
@@ -34,41 +35,26 @@ class Db extends Model
         string $dbname = Config::dbname,
         int $port = Config::port
     ) {
-        $this->adapter = static::getDb($db_engine, $hostname, $username, $password, $dbname, $port);
-        // $class = "App\\DB\\$db_engine";
-        // if (class_exists($class)) {
-        //     $this->adapter = new $class($di, $hostname, $username, $password, $dbname, $port);
-        // } else {
-        //     throw new Exception("Error: could not load database adapter " . $db_engine);
-        // }
+        $this->adapter = DbConnection::getDb($db_engine, $hostname, $username, $password, $dbname, $port);
     }
 
     /**
      * Execute a database query.
      *
-     * @param string $query The SQL query to execute
-     * @return mixed The query result
-     */
-    public function query(string $query): mixed
-    {
-        return $this->adapter->query($query);
-    }
-
-    /**
-     * Escape a string for use in a database query.
+     * @param string $query  The SQL query to execute.
+     * @param array  $params The query parameters.
      *
-     * @param string $value The value to escape
-     * @return string The escaped value
+     * @return mixed The query result.
      */
-    public function escape(string $value): string
+    public function runQuery(string $query, $params = []): mixed
     {
-        return $this->adapter->escape($value);
+        return $this->adapter->runQuery($query, $params);
     }
 
     /**
      * Get the number of rows affected by the last query.
      *
-     * @return int The number of affected rows
+     * @return int The number of affected rows.
      */
     public function countAffected(): int
     {
@@ -78,17 +64,17 @@ class Db extends Model
     /**
      * Get the last inserted ID.
      *
-     * @return int The last inserted ID
+     * @return int The last inserted ID.
      */
-    public function getLastId(): int
+    public function getLastInsertId(): int
     {
-        return $this->adapter->getLastId();
+        return $this->adapter->getLastInsertId();
     }
 
     /**
      * Check if the database connection is active.
      *
-     * @return bool True if connected, false otherwise
+     * @return bool True if connected, false otherwise.
      */
     public function isConnected(): bool
     {
