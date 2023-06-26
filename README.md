@@ -32,7 +32,7 @@ Cannon MVC is an exceptional web application framework that embraces an expressi
 2. Create controllers in the `App/Controller` directory to handle different actions.
 3. Define models in the `App/Model` directory to interact with the database.
 4. Create views in the `App/View` directory to render the presentation layer.
-5. Customize the `BaseController` and `BaseModel` classes according to your application's needs if necessary.
+5. Customize the `BaseController` class according to your application's needs if necessary.
 6. Extends the framework by adding your own service to the framework using service provider if necessary.
 
 ## Contributing
