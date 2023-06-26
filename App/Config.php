@@ -50,7 +50,7 @@ class Config
     const db_autostart = true;
 
     /**
-     * @var string The command builder for database queries.
+     * @var string The command builder for database queries using orm.
      */
     const db_command_builder = 'MysqlCommandBuilder';
 

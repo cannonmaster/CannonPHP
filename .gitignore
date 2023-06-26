@@ -16,3 +16,5 @@
 /mindmap/*
 
 /phpmvc.mindnode/*
+
+.env

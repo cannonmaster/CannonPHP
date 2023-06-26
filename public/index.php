@@ -12,6 +12,9 @@
 // composer autolaod
 require_once '../vendor/autoload.php';
 
+// $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+// $dotenv->load();
+
 use App\Config;
 use Core\Router;
 use Engine\Di;
