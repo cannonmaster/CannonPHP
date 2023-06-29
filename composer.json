@@ -1,6 +1,5 @@
 {
     "name": "cannonphp/app",
-    "version": "1.0.0",
     "description": "Cannon MVC is an exceptional web application framework that embraces an expressive and elegant syntax. ",
     "config": {
         "sort-packages":true
