@@ -1,4 +1,6 @@
 {
+    "name": "cannonphp/app",
+    "description": "Cannon MVC is an exceptional web application framework that embraces an expressive and elegant syntax. ",
     "config": {
         "sort-packages":true
     },
@@ -17,5 +19,6 @@
     },
     "scripts": {
         "phpstan": "vendor/bin/phpstan analyze -c phpstan.neon"
-    }
+    },
+    "license": "MIT"
 }
