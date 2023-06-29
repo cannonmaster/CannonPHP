@@ -20,7 +20,12 @@ Cannon MVC is an exceptional web application framework that embraces an expressi
 
 ## Installation
 
-1. Clone the repository or download the source code.
+1. create a new CakePHP application using composer’s create-project command:
+
+```bash
+composer create-project --prefer-dist cannonphp/app
+```
+
 2. Run `composer install` to install the required dependencies.
 3. Configure your web server to point to the public directory as the document root.
 4. Customize the framework's `Config.php` file located in the `App` directory, such as database settings, routes, etc.
