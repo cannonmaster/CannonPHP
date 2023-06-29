@@ -26,7 +26,7 @@ Cannon MVC is an exceptional web application framework that embraces an expressi
 composer create-project --prefer-dist cannonphp/app
 ```
 
-2. Run `composer install` to install the required dependencies.
+2. `cd app`, run `composer install` to install the required dependencies.
 3. Configure your web server to point to the public directory as the document root.
 4. Customize the framework's `Config.php` file located in the `App` directory, such as database settings, routes, etc.
 5. Start building your application by creating controllers, models, and views in their respective directories.
