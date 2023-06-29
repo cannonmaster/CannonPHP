@@ -10,10 +10,11 @@
  *                        - runwhen: Specifies when the hook should run ("before" or "after").
  * @return void
  */
-$hook::addCustomHook('apples/index', function () {
-    // echo 'apples index abc';
-    $file = dirname(__DIR__) . '/../log/2023-06-11.txt';
-    error_log('action hook1', 3, $file);
+$hook::addCustomHook('home/index', function () {
+
+    // echo 'home index custom before hook1 /';
+    // $file = dirname(__DIR__) . '/../log/2023-06-11.txt';
+    // error_log('action hook1', 3, $file);
 }, array('runwhen' => 'before'));
 
 /**
@@ -26,10 +27,10 @@ $hook::addCustomHook('apples/index', function () {
  *                        - runwhen: Specifies when the hook should run ("before" or "after").
  * @return void
  */
-$hook::addCustomHook('apples/index', function () {
-    // echo 'apples index 123';
-    $file = dirname(__DIR__) . '/../log/2023-06-11.txt';
-    error_log('action hook2', 3, $file);
+$hook::addCustomHook('home/index', function () {
+    // echo 'home index custom before hook2 /';
+    // $file = dirname(__DIR__) . '/../log/2023-06-11.txt';
+    // error_log('action hook2', 3, $file);
 }, array('runwhen' => 'before'));
 
 /**
@@ -42,8 +43,8 @@ $hook::addCustomHook('apples/index', function () {
  *                        - runwhen: Specifies when the hook should run ("before" or "after").
  * @return void
  */
-$hook::addCustomHook('apples/index', function () {
-    // echo 'apples index 321';
-    $file = dirname(__DIR__) . '/../log/2023-06-11.txt';
-    error_log('action hook3', 3, $file);
+$hook::addCustomHook('home/index', function () {
+    // echo 'home index custom after hook1 /';
+    // $file = dirname(__DIR__) . '/../log/2023-06-11.txt';
+    // error_log('action hook3', 3, $file);
 }, array('runwhen' => 'after'));

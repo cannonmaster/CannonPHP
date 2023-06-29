@@ -11,9 +11,9 @@
  * @return void
  */
 $hook::addHook('afterController', function () {
-    // echo 'after 1';
-    $file = dirname(__DIR__) . '/../log/2023-06-11.txt';
-    error_log('after controller 1', 3, $file);
+    // echo 'after controller hook1 /';
+    // $file = dirname(__DIR__) . '/../log/2023-06-11.txt';
+    // error_log('after controller 1', 3, $file);
 }, array('priority' => 0));
 
 /**
@@ -27,6 +27,7 @@ $hook::addHook('afterController', function () {
  * @return void
  */
 $hook::addHook('afterController', function () {
-    $file = dirname(__DIR__) . '/../log/2023-06-11.txt';
-    error_log('after controller 2', 3, $file);
+    // echo 'after controller hook2 /';
+    // $file = dirname(__DIR__) . '/../log/2023-06-11.txt';
+    // error_log('after controller 2', 3, $file);
 });

@@ -4,7 +4,7 @@ namespace Engine;
 
 class Session
 {
-    protected \App\Session\SessionAdapterInterface $adapter;
+    public \App\Session\SessionAdapterInterface $adapter;
     protected ?string $session_id = null;
     public array $data = [];
 

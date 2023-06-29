@@ -74,9 +74,9 @@ class Router
     public function dispatch($url)
     {
         $url = rtrim($url, '/');
-        if (empty($url)) {
-            $url = 'home';
-        }
+        // if (empty($url)) {
+        //     $url = 'home';
+        // }
         if ($this->match($url)) {
             $controller = $this->params['controller'];
             $controller = $this->controllerNameCamel($controller);
@@ -91,7 +91,7 @@ class Router
 
                 // prevent the user call the action directory from the url such as http://localhost/controller/indexAction
                 if (preg_match('/action$/i', $method) == 0) {
-                    $controller_object->$method();
+                    $controller_object->$method($this->params);
                 } else {
                     throw new \Exception("Method $method in controller $controller cannot be called directly");
                 }
@@ -125,10 +125,18 @@ class Router
      */
     protected function removeQueryStringVariables($url)
     {
-        if ($url === '') {
-            return $url;
+        if ($url != '') {
+            $parts = explode('&', $url, 2);
+
+            if (strpos($parts[0], '=') === false) {
+                $url = $parts[0];
+            } else {
+                $url = '';
+            }
         }
-        return parse_url($url, PHP_URL_PATH) ?: '';
+
+        return $url;
+        // return parse_url($url, PHP_URL_PATH) ?: '';
     }
 
     /**

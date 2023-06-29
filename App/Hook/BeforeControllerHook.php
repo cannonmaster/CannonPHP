@@ -11,9 +11,9 @@
  * @return void
  */
 $hook::addHook('beforeController', function () {
-    // echo 'before 1';
-    $file = dirname(__DIR__) . '/../log/2023-06-11.txt';
-    error_log('0', 3, $file);
+    // echo 'before controller hook1 /';
+    // $file = dirname(__DIR__) . '/../log/2023-06-11.txt';
+    // error_log('0', 3, $file);
 });
 
 /**
@@ -27,7 +27,7 @@ $hook::addHook('beforeController', function () {
  * @return void
  */
 $hook::addHook('beforeController', function () {
-    // echo 'before 2';
-    $file = dirname(__DIR__) . '/../log/2023-06-11.txt';
-    error_log('1', 3, $file);
+    // echo 'before controller hook2 /';
+    // $file = dirname(__DIR__) . '/../log/2023-06-11.txt';
+    // error_log('1', 3, $file);
 }, array('priority' => 0));

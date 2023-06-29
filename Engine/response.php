@@ -57,13 +57,14 @@ class Response
      * Compress the response data based on the compression level and encoding.
      *
      * @param int    $level The compression level.
-     * @param string $data  The data to compress.
+     * @param string|array $data  The data to compress.
      *
      * @return string The compressed data.
      */
-    private function compress(int $level, string $data): string
+    private function compress(int $level, $data): string
     {
         $level = $level ?: $this->compressLevel;
+        $data = is_array($data) ? json_encode($data) : $data;
         if ($level < -1 || $level > 9) {
             return $data;
         }
@@ -84,12 +85,12 @@ class Response
         if (headers_sent() || connection_status()) {
             return $data;
         }
+        // $compressed = gzencode($data, $level);
+        // $this->addHeader('Content-Encoding: ' . $this->encoding);
+        // $this->addHeader('Content-Length: ' . strlen($compressed));
 
-        $compressed = gzencode($data, $level);
-        $this->addHeader('Content-Encoding: ' . $this->encoding);
-        $this->addHeader('Content-Length: ' . strlen($compressed));
-
-        return $compressed;
+        // return $compressed;
+        return $data;
     }
 
     /**
@@ -117,21 +118,19 @@ class Response
 
     public function output(): void
     {
-
         if ($this->output) {
-            $output = $this->compressLevel ? $this->compress($this->compressLevel, $this->output) : $this->output;
-
-            $current_route = $this->currentRoute();
-            if (!headers_sent()) {
-                foreach ($this->headers as $header) {
-                    header($header, true);
-                }
-            }
-            echo $output;
-            $this->afterActionHook($current_route);
-            $this->afterControllerHook($current_route);
-            // After action hook
+            $this->output = $this->compressLevel ? $this->compress($this->compressLevel, $this->output) : $this->output;
         }
+        $current_route = $this->currentRoute();
+        if (!headers_sent()) {
+            foreach ($this->headers as $header) {
+                header($header, true);
+            }
+        }
+        echo $this->output;
+        $this->afterActionHook($current_route);
+        $this->afterControllerHook($current_route);
+        // After action hook
     }
 
     /**
@@ -151,6 +150,7 @@ class Response
      */
     public function afterActionHook($current_object): void
     {
+
         $current_object->afterAction();
     }
 
@@ -162,5 +162,22 @@ class Response
     public function afterControllerHook($current_object): void
     {
         $current_object->afterController();
+    }
+
+    public function redirect($url)
+    {
+        header('Location: ' . $url, true, 302);
+        exit();
+    }
+
+    public function json(array $responseData)
+    {
+        $this->addHeader('Content-Type: application/json');
+
+        // Convert the data to JSON format
+        $jsonData = json_encode($responseData);
+
+        // Output the JSON response
+        echo $jsonData;
     }
 }
