@@ -20,7 +20,7 @@ Cannon MVC is an exceptional web application framework that embraces an expressi
 
 ## Installation
 
-1. create a new CakePHP application using composer’s create-project command:
+1. create a new CannonPHP application using composer’s create-project command:
 
 ```bash
 composer create-project --prefer-dist cannonphp/app
