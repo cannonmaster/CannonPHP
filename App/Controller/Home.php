@@ -9,7 +9,8 @@ class Home extends  BaseController
 {
     public function indexAction()
     {
-        $name = 123;
+        $name = 666;
+
 
         return View::renderTemplate('Home/index.html', ['name' => $name]);
     }
